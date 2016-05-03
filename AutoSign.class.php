@@ -1,31 +1,81 @@
 <?php
+
 /**
-* 
-*/
-class login
+ * 联通优选在沃自动签到程序
+ * 使用ImageOCR自动识别图片验证码
+ * Class login
+ */
+class AutoSign
 {
 	private $_login_cookie;
     private $_code_cookie;
 	
 	public function __construct($user_name,$password)
 	{
-
-        do{
-            /*--------获取验证码图片--------*/
+        $msg='';
+        for($count=0;$count<20;$count++){
+            /*--------获取验证码图片并识别--------*/
             $code=$this->getCode();
-            if(!$this->checkCode($code)) continue;
+
+            /*------------验证验证码是否正确------------*/
+            if(!$this->checkCode($code)){
+                $msg .="【验证码】：$code 验证失败 <br /> ";
+                continue;
+            }else{
+                $msg .="【验证码】：$code 验证成功 <br /> ";
+            }
+
+
+            /*----------登陆---------*/
             $url="http://www.169ol.com/Mall/User/submitLogin";
             $data="user_name={$user_name}&user_password={$password}&Verification=".$code;
             $this->login($url,$data);
-            if($this->sign()){
 
+            $sign_data=json_decode($this->sign(),true);
+            $msg .="【签到结果：】".$sign_data['msg'] ."<br />";
+            if($sign_data['status']){
+                echo "签到成功 <br />";
+                break;
             }else{
-
+                if($sign_data['gotourl']){
+                    echo "尚未登陆 <br />";
+                    continue;
+                }else{
+                    echo "已签到 <br />";
+                    break;
+                }
             }
-        }while(1);
 
+        }
+
+        $msg .= "【运行次数】：".($count+1)." 次 <br /> ";
+        $this->mail($msg);
 	}
 
+    public function mail($msg){
+        require_once "./lib/PHPMailer/PHPMailerAutoload.php";
+        $mail = new PHPMailer;
+        $mail->isSMTP();
+        $mail->SMTPDebug = 2;
+        $mail->Debugoutput = 'html';
+        $mail->Host = "smtp.mxhichina.com";
+        $mail->Port = 25;
+        $mail->SMTPAuth = true;
+        $mail->Username = "test@lxl520.com";
+        $mail->Password = "QWEqwe123";
+        $mail->setFrom('test@lxl520.com', '莫回首');
+        $mail->addReplyTo('test@lailin.xyz', '测试');
+        $mail->addAddress('1@lailin.xyz', '123');
+        $mail->Subject = '优选在沃自动签到结果';
+        $mail->msgHTML($msg);
+        $mail->AltBody = 'This is a plain-text message body';
+        if (!$mail->send()) {
+            echo "Mailer Error: " . $mail->ErrorInfo;
+        } else {
+            echo "Message sent!";
+        }
+
+    }
 
     /**
      * 检查验证码
@@ -39,12 +89,13 @@ class login
 
 
     /**
+     * 登陆
      * @author mohuishou<1@lailin.xyz>
-     * @param $url
-     * @param $data
+     * @param string $url 登陆地址
+     * @param string $data 登陆需要post的数据
      */
 	public function login($url,$data){
-        $this->_login_cookie=dirname(__FILE__)."/login.cookie";
+        $this->_login_cookie=dirname(__FILE__)."/cookies/login.cookie";
 	    $ch = curl_init();
 	    curl_setopt ($ch, CURLOPT_TIMEOUT, 100);
 	    curl_setopt ($ch, CURLOPT_URL,$url);
@@ -60,24 +111,30 @@ class login
 
     /**
      * @author mohuishou<1@lailin.xyz>
-     * @param string $url
+     * @param string $url get方法获取数据
+     * @param string $cookie cookie文件的地址，默认为$this->_login_cookie
      * @return mixed
      */
-	public function getContent($url="http://www.169ol.com/Mall/Personal/index") {
-	    $ch = curl_init(); 
+	public function getContent($url,$cookie=null) {
+        //$cookie赋初值
+        !$cookie && $cookie=$this->_login_cookie;
+
+        $ch = curl_init();
 	    curl_setopt($ch, CURLOPT_URL, $url); 
 	    curl_setopt($ch, CURLOPT_HEADER,0); 
 	    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	    curl_setopt($ch,CURLOPT_COOKIEFILE,$this->_login_cookie); //读取cookie
+	    curl_setopt($ch,CURLOPT_COOKIEFILE,$cookie); //读取cookie
 	    $rs = curl_exec($ch); //执行cURL抓取页面内容
-	    curl_close($ch); 
+	    curl_close($ch);
+
 	    return $rs; 
 	}
 
     /**
+     * 签到
      * @author mohuishou<1@lailin.xyz>
-     * @param string $url
-     * @return mixed
+     * @param string $url 签到的地址
+     * @return string $json 返回一个json数据
      */
 	public function sign($url="http://www.169ol.com/Mall/Sign/ajaxSign"){
 		return $this->getContent($url);
@@ -106,15 +163,16 @@ class login
 	}
 
     /**
+     * 获取验证码并自动识别
      * @author mohuishou<1@lailin.xyz>
      * @param string $url
      * @param string $fileName
-     * @return string
+     * @return string 返回识别字符串
      */
-    function getCode($url = 'http://www.169ol.com/Mall/Code/getCode', $fileName = './img/code.png')
+    public function getCode($url = 'http://www.169ol.com/Mall/Code/getCode', $fileName = './img/code.png')
     {
 
-        $this->_code_cookie = dirname(__FILE__)."/pic.cookie";
+        $this->_code_cookie = dirname(__FILE__)."/cookies/pic.cookie";
 
         /*---------设置header---------*/
 		$header[]="User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2633.3 Safari/537.36";
@@ -138,7 +196,7 @@ class login
         fclose($fp);
 
         /*----------验证码识别--------*/
-        require_once "../ImageOCR/Image.class.php";
+        require_once dirname(__FILE__)."/lib/ImageOCR/Image.class.php";
         $image=new \ImageOCR\Image("./img/code.png");
         $a=$image->find();
         $code=implode("",$a);
