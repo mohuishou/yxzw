@@ -32,10 +32,8 @@ class AutoSign
             $data="user_name={$user_name}&user_password={$password}&Verification=".$code;
             $this->login($url,$data);
 
+            /*-----------获取签到结果并进行解析-----------*/
             $sign_data=json_decode($this->sign(),true);
-            
-            $msg .="【签到结果：】".$sign_data['msg'] ."<br />";
-
             if($sign_data['status']){
                 echo "签到成功 <br />";
                 break;
@@ -51,20 +49,20 @@ class AutoSign
 
         }
 
+        /*---------------整理反馈数据---------------*/
+        $msg .="【签到结果：】".$sign_data['msg'] ."<br />";
         $msg .= "【运行次数】：".($i+1)." 次 <br /> ";
         $msg .= "【开始时间】：".date("Y-m-d H:m:s",$begin_time);
         $end_time=time();
         $msg .="【运行时间】：".($end_time-$begin_time) ."秒";
 
-
-
+        /*-----------是否通过邮件发送反馈数据-------------*/
         if($is_mail){
             require_once "Mail.inc.php";
             echo sendMail($msg);
         }else{
             echo $msg;
         }
-
 
 	}
 
@@ -119,7 +117,6 @@ class AutoSign
 	    curl_setopt($ch,CURLOPT_COOKIEFILE,$cookie); //读取cookie
 	    $rs = curl_exec($ch); //执行cURL抓取页面内容
 	    curl_close($ch);
-
 	    return $rs; 
 	}
 
@@ -137,18 +134,23 @@ class AutoSign
 
     /**
      * @author mohuishou<1@lailin.xyz>
-     * @param $url
-     * @param $data
+     * @param string $url post的地址
+     * @param mixed $data post的数据 可以是字符串也可以是数组
+     * @param string $cookie cookie文件的地址，默认为$this->_login_cookie
      * @return mixed
      */
-	public function  post($url,$data){
+	public function  post($url,$data,$cookie=null){
+
+        //$cookie赋初值
+        !$cookie && $cookie=$this->_login_cookie;
+
 		$ch = curl_init ();
 		curl_setopt ( $ch, CURLOPT_URL, $url );
 		curl_setopt ( $ch, CURLOPT_POST, 1 );
 		curl_setopt ( $ch, CURLOPT_HEADER, 0 );
 		curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1 );
 		curl_setopt ( $ch, CURLOPT_POSTFIELDS, $data );
-        curl_setopt($ch,CURLOPT_COOKIEFILE, $this->_code_cookie);
+        curl_setopt($ch,CURLOPT_COOKIEFILE, $cookie);
 		$rs = curl_exec ( $ch );
 		curl_close ( $ch );
 //		echo $rs;
