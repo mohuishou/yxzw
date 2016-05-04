@@ -10,10 +10,11 @@ class AutoSign
 	private $_login_cookie;
     private $_code_cookie;
 	
-	public function __construct($user_name,$password)
+	public function __construct($user_name,$password,$count=20,$is_mail=true)
 	{
-        $msg='';
-        for($count=0;$count<20;$count++){
+        $begin_time=time();
+        $msg='感谢您使用优选在沃在线签到系统，您的使用情况如下：<br />';
+        for($i=0;$i<$count;$i++){
             /*--------获取验证码图片并识别--------*/
             $code=$this->getCode();
 
@@ -32,7 +33,9 @@ class AutoSign
             $this->login($url,$data);
 
             $sign_data=json_decode($this->sign(),true);
+            
             $msg .="【签到结果：】".$sign_data['msg'] ."<br />";
+
             if($sign_data['status']){
                 echo "签到成功 <br />";
                 break;
@@ -48,34 +51,24 @@ class AutoSign
 
         }
 
-        $msg .= "【运行次数】：".($count+1)." 次 <br /> ";
-        $this->mail($msg);
-	}
+        $msg .= "【运行次数】：".($i+1)." 次 <br /> ";
+        $msg .= "【开始时间】：".date("Y-m-d H:m:s",$begin_time);
+        $end_time=time();
+        $msg .="【运行时间】：".($end_time-$begin_time) ."秒";
 
-    public function mail($msg){
-        require_once "./lib/PHPMailer/PHPMailerAutoload.php";
-        $mail = new PHPMailer;
-        $mail->isSMTP();
-        $mail->SMTPDebug = 2;
-        $mail->Debugoutput = 'html';
-        $mail->Host = "smtp.mxhichina.com";
-        $mail->Port = 25;
-        $mail->SMTPAuth = true;
-        $mail->Username = "test@lxl520.com";
-        $mail->Password = "QWEqwe123";
-        $mail->setFrom('test@lxl520.com', '莫回首');
-        $mail->addReplyTo('test@lailin.xyz', '测试');
-        $mail->addAddress('1@lailin.xyz', '123');
-        $mail->Subject = '优选在沃自动签到结果';
-        $mail->msgHTML($msg);
-        $mail->AltBody = 'This is a plain-text message body';
-        if (!$mail->send()) {
-            echo "Mailer Error: " . $mail->ErrorInfo;
-        } else {
-            echo "Message sent!";
+
+
+        if($is_mail){
+            require_once "Mail.inc.php";
+            echo sendMail($msg);
+        }else{
+            echo $msg;
         }
 
-    }
+
+	}
+
+   
 
     /**
      * 检查验证码
