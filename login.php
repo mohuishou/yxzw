@@ -9,7 +9,7 @@ session_start();
  */
 require_once "vendor/autoload.php";
 include_once 'lib/bmob/BmobObject.class.php';
-
+require_once "function.php";
 
 
 
@@ -81,26 +81,3 @@ if($password==$res->results[0]->password){
 
 
 
-
-function success($info,$url="",$data=""){
-    $data=[
-        'status'=>1,//1成功,0错误
-        "info"=>$info,
-        "url"=>$url,
-        "data"=>$data
-    ];
-
-    echo json_encode($data);
-    exit();
-}
-
-function error($info,$url=""){
-    $data=[
-        'status'=>0,//1成功,0错误
-        "info"=>$info,
-        "url"=>$url
-    ];
-
-    echo json_encode($data);
-    exit();
-}

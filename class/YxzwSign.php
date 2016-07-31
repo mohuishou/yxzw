@@ -143,25 +143,26 @@ class YxzwSign
             "status"=>1,//签到状态，1成功，2已经签到，0签到失败,-1:登录失败
             "sign_info"=>'', //本月签到详细信息，对象
             "all_sign"=>0,  //本月签到总次数
-            "all_sign"=>0,  //本月签到总次数
             "wb"=>0 //剩余沃贝数目
         ];
+
+        //登录
         $res_login=$this->login($phone,$password);
         if(!$res_login){
             $data['status']=-1;
             return $data;
         }
 
+        //签到
         $res_sign=$this->sign();
-
         if(!$res_sign->status){
             $data['status']=0;
             return $data;
         }
         $data['status']=$res_sign->status;
 
+        //获取信息
         $res_info=$this->signNum();
-
         if($res_info){
             $data["all_sign"]=$res_info["all_sign"];
             $data["sign_info"]=$res_info["sign_info"];
