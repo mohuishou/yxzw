@@ -155,6 +155,7 @@ class YxzwSign
 
         //签到
         $res_sign=$this->sign();
+        print_r($res_sign);
         if(!$res_sign->status){
             $data['status']=0;
             return $data;

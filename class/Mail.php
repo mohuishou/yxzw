@@ -6,7 +6,7 @@
  * Date: 2016/5/2 0002
  * Time: 12:51
  */
-namespace Mohuishou\Lib;
+
 /**
  * 利用sendcloud接口的邮件发送函数，专门的邮件服务商，对于邮件发送相对比较友好，并且可以不用引用相关文件
  * @author mohuishou<1@lailin.xyz>
