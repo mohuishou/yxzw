@@ -2,3 +2,4 @@ cookies/
 index.php
 Mail.inc.php
 test.php
+.env

@@ -60,14 +60,16 @@ class AutoSign
 
 
         $i>=$count && $msg .="自动签到失败";
-//        echo $msg;
-        /*-----------是否通过邮件发送反馈数据-------------*/
-        if ($is_mail) {
-            require_once "Mail.inc.php";
-            echo sendMail($msg);
-        } else {
-            echo $msg;
-        }
+
+        return $msg;
+// //        echo $msg;
+//         /*-----------是否通过邮件发送反馈数据-------------*/
+//         if ($is_mail) {
+//             require_once "Mail.inc.php";
+//             echo sendMail($msg);
+//         } else {
+//             echo $msg;
+//         }
 
     }
 
