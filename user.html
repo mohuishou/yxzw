@@ -49,6 +49,15 @@
             padding:15px;
         }
 
+        #alert{
+            padding:10px 20px;
+            display: none;
+        }
+
+        #alert p{
+            margin: 5px;
+        }
+
 
     </style>
 </head>
@@ -76,8 +85,8 @@
         </div>
     </header>
     <div class="am-g am-g-fixed" id="main">
-        <div>
-            <p></p>
+        <div id="alert" class="am-alert-danger am-margin">
+
         </div>
         <div class="am-cf am-padding">
             <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">用户信息</strong> </div>
@@ -98,8 +107,8 @@
             <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">用户设置</strong></div>
         </div>
         <ul class="am-avg-sm-2 am-avg-md-2 am-margin am-padding am-text-center user-content-list ">
-            <li><a onclick="autoSwitch()" id="auto-status" data-status="0" href="#" class="am-text-success"><span class="am-icon-btn am-icon-chrome"></span><br>自动签到<br><span id="auto-status-text">已开启</span></a></li>
-            <li><a href="#" class="am-text-warning"><span class="am-icon-btn am-icon-at"></span><br>邮箱绑定<br>1@lailin.xyz</a></li>
+            <li><a onclick="autoSwitch()" id="auto-status" data-status="0"  class="am-text-success"><span class="am-icon-btn am-icon-chrome"></span><br>自动签到<br><span id="auto-status-text">已开启</span></a></li>
+            <li><a  onclick="email()" class="am-text-warning"><span class="am-icon-btn am-icon-at"></span><br>邮箱绑定<br><span id="email-text">尚未绑定</span></a></li>
         </ul>
     </div>
 
@@ -141,17 +150,34 @@
         function init(data) {
             $("#user-phone").text(data.user.phone);
             $("#all_sign").text(data.all_sign);
+
+            //是否已经自动签到
             if(data.auto_sign){
                 $("#auto_sign").text(data.auto_sign);
             }else {
                 $("#auto_sign").text(0);
             }
+
             $("#sign_num").text(data.user.sign_num);
             $("#wb").text(data.user.wb);
+
+            //自动状态
             var auto_status=data.user.auto_status;
             $("#auto-status").attr("data-status",auto_status);
+
+            //邮箱
+            var email=data.user.email;
+            if(email){
+                $("#email-text").text(email);
+            }else {
+                $("#alert").append(" <p>尚未绑定邮箱，无法收到自动签到提醒</p>");
+                $("#alert").css("display","block");
+            }
+
             if(!auto_status){
                 $("#auto-status-text").text("已关闭");
+                $("#alert").append("<p>尚未开启自动签到</p>");
+                $("#alert").css("display","block");
             }
 
             var sign_info=data.sign_info;
@@ -180,25 +206,41 @@
         
         function email() {
             swal({
-                title: 'Submit email to run ajax request',
+                title: '绑定邮箱',
                 input: 'email',
                 showCancelButton: true,
                 confirmButtonText: 'Submit',
                 showLoaderOnConfirm: true,
-                preConfirm: function() {
-                    return new Promise(function(resolve) {
-                        setTimeout(function() {
-                            resolve();
-                        }, 2000);
-                    });
-                },
                 allowOutsideClick: false
             }).then(function(email) {
                 if (email) {
-                    swal({
-                        type: 'success',
-                        title: 'Ajax request finished!',
-                        html: 'Submitted email: ' + email
+                    $.ajax({
+                        type:"POST",
+                        url:'./user.php',
+                        data:{
+                            "action":"email",
+                            "data":email
+                        },
+                        success:function (data) {
+                            if(data.status){
+                                swal({
+                                    title: '提示',
+                                    text: data.info,
+                                    type: 'success',
+                                    showCancelButton: false,
+                                    confirmButtonText: '跳转中...'
+                                });
+                                setTimeout(function () {
+                                    location.href="./user.html";
+                                },1000);
+                            }else {
+                                swal('Oops...', '修改失败', 'error');
+                            }
+                            console.log(data);
+                        },
+                        error:function (e) {
+                            swal('Oops...', '服务器错误', 'error');
+                        }
                     });
                 }
             })

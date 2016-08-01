@@ -13,11 +13,11 @@
  * @param $msg
  * @return string
  */
-function sendMail($msg)
+function sendMail($msg,$email)
 {
     $url = 'http://sendcloud.sohu.com/webapi/mail.send.json';
-    $API_USER = 'MOHUIHSOU_test_lHbOTh';
-    $API_KEY = 'GmKosJDHD8yLulsA';
+    $API_USER = 'mohuishou';
+    $API_KEY = 'RV0PMH97plzLGvue';
 
     //不同于登录SendCloud站点的帐号，您需要登录后台创建发信子帐号，使用子帐号和密码才可以进行邮件的发送。
     $param = array(
@@ -25,7 +25,7 @@ function sendMail($msg)
         'api_key' => $API_KEY,
         'from' => 'test@lailin.xyz',
         'fromname' => 'mohuishou',
-        'to' => '1@lailin.xyz',
+        'to' => $email,
         'subject' => '优选在沃自动签到结果',
         'html' => $msg,
         'resp_email_id' => 'true');

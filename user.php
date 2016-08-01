@@ -20,6 +20,8 @@ if(isset($_POST['action'])){
             autoSwitch($user_db,$uid,$_POST['data']);
             break;
         case "email":
+            updateEmail($user_db,$uid,$_POST['data']);
+            break;
 
     }
 }

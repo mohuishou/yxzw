@@ -3,6 +3,7 @@ date_default_timezone_set("PRC");
 require_once "vendor/autoload.php";
 include_once 'lib/bmob/BmobObject.class.php';
 include_once 'class/Mail.php';
+set_time_limit(0);//关闭时间限制
 //自动签到
 $user_db=new BmobObject("user");
 
@@ -70,16 +71,20 @@ foreach ($res->results as $k=>$v){
 
 
     //发送邮件
-    $msg="【手机号】：".$v->phone."\n";
-    $msg.="【签到情况】：".$msg_status."\n";
-    $msg.="【本月签到次数】：".$auto_sign["all_sign"]."\n";
-    $msg.="【本月自动签到次数】：".$auto_sign["all_sign"]."\n";
-//    $msg.="【剩余自动签到次数】：".$msg_sign_num."\n";
-    $msg.="【签到时间】：".date("Y-m-d H:i:s")."\n";
-    $msg.="详情请点击：http://y.lxl520.com 登录查看，感谢您的使用";
-//    $re=sendMail($msg);
-//    print_r($re);
-   
+    $msg="感谢您使用优选在沃在线签到系统，您的使用情况如下：<br />";
+    $msg .="【手机号】：".$v->phone."<br />";
+    $msg .="【签到情况】：".$msg_status."<br />";
+    $msg .="【本月签到次数】：".$auto_sign["all_sign"]."<br />";
+    $msg .="【本月自动签到次数】：".$auto_sign["all_sign"]."<br />";
+    $msg .="【剩余自动签到次数】：".$msg_sign_num."<br />";
+    $msg .="【签到时间】：".date("Y-m-d H:i:s")."<br />";
+    $msg .="详情请点击：http://y.lxl520.com 登录查看，感谢您的使用";
+//    echo $msg;
+    if(isset($v->email)){
+        $re=sendMail($msg,$v->email);
+        print_r($re);
+    }
+
 
 }
 
