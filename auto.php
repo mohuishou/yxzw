@@ -83,6 +83,16 @@ foreach ($res->results as $k=>$v){
 
 }
 
+/**
+ * 更新数据库
+ * @author mohuishou<1@lailin.xyz>
+ * @param $yxzw_db
+ * @param $uid
+ * @param $data
+ * @param $user_db
+ * @param $wb
+ * @param $auto_status
+ */
 function update($yxzw_db,$uid,$data,$user_db,$wb,$auto_status){
     $res=$yxzw_db->get("",array('where={"month":'.(int)date("m").',"user":{"__type":"Pointer","className":"user","objectId":"'.$uid.'"}}'));
 

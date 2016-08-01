@@ -12,15 +12,7 @@
     <!--[if IE]>
     <script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script>
     <![endif]-->
-    <script>
-        var _hmt = _hmt || [];
-        (function() {
-            var hm = document.createElement("script");
-            hm.src = "//hm.baidu.com/hm.js?0d15540a1baf245629e09cdeb311bcd0";
-            var s = document.getElementsByTagName("script")[0];
-            s.parentNode.insertBefore(hm, s);
-        })();
-    </script>
+
 
     <style type="text/css">
         #footer a{
@@ -46,7 +38,7 @@
     <div class="container">
         <h2>优选在沃自动签到系统</h2>
         <form class="form">
-            <input name="username" id="username" type="text" required placeholder="优选在沃手机号">
+            <input name="phone" id="username" type="number" required placeholder="优选在沃手机号">
             <input name="password" id="password" type="password" required placeholder="优选在沃密码">
             <input name="send" value="send" type="hidden">
             <button type="submit"  id="login-button">登录</button>
@@ -103,8 +95,8 @@
             data:$('form').serialize(),
 
             success:function (data) {
-                data=JSON.parse(data);
-                if(data.status==200){
+//                data=JSON.parse(data);
+                if(data.status){
                     swal({
                         title: 'Success',
                         text: '登录成功',
@@ -113,10 +105,10 @@
                         confirmButtonText: '跳转中...'
                     });
                     setTimeout(function () {
-                        location.href="./grade.html";
+                        location.href="./user.html";
                     },1000);
                 }else {
-                    swal('提示', data.msg, 'warning');
+                    swal('提示', data.info, 'warning');
                 }
                 console.log(data);
             },

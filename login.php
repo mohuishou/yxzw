@@ -12,8 +12,7 @@ include_once 'lib/bmob/BmobObject.class.php';
 require_once "function.php";
 
 
-
-if(!isset($_POST["send"])||!isset($_POST["phone"])||!isset($_POST["password"])){
+if(!isset($_POST["phone"])||!isset($_POST["password"])){
     error("参数错误");
 }
 
