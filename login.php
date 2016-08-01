@@ -10,6 +10,7 @@ session_start();
 require_once "vendor/autoload.php";
 include_once 'lib/bmob/BmobObject.class.php';
 require_once "function.php";
+require_once "sign.php";
 
 
 if(!isset($_POST["phone"])||!isset($_POST["password"])){
@@ -56,7 +57,13 @@ if(empty($res->results)){
     }
 
     $_SESSION['uid']=$res_user->objectId;
-    success("注册成功！");
+    $res_init=sign($res_user->objectId);
+    if($res_init['status']>0){
+        success("注册成功！");
+    }else{
+        error("初始化失败！");
+    }
+
 }
 
 $_SESSION['uid']=$res->results[0]->objectId;

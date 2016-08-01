@@ -98,7 +98,7 @@ function update($yxzw_db,$uid,$data,$user_db,$wb,$auto_status){
 
     if(empty($res->results)){
         $res=$yxzw_db->addRelPointer(array(array("user","user",$uid)));
-        $res2=$yxzw_db->update($res->results[0]->objectId,$data);
+        $res2=$yxzw_db->update($res->objectId,$data);
     }else{
         $res2=$yxzw_db->update($res->results[0]->objectId,$data);
 

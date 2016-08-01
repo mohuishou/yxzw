@@ -40,6 +40,7 @@
         }
         .user-content-list li{
             border-left: 1px solid #e9ecf1;
+            margin-top: 5px;
         }
         .user-content-list li:first-child{
             border-left:none;
@@ -140,7 +141,11 @@
         function init(data) {
             $("#user-phone").text(data.user.phone);
             $("#all_sign").text(data.all_sign);
-            $("#auto_sign").text(data.auto_sign);
+            if(data.auto_sign){
+                $("#auto_sign").text(data.auto_sign);
+            }else {
+                $("#auto_sign").text(0);
+            }
             $("#sign_num").text(data.user.sign_num);
             $("#wb").text(data.user.wb);
             var auto_status=data.user.auto_status;
@@ -171,6 +176,32 @@
             $("#cal").html(str);
             $(".loader .fading-line").fadeOut();
             $(".loader").fadeOut("slow");
+        }
+        
+        function email() {
+            swal({
+                title: 'Submit email to run ajax request',
+                input: 'email',
+                showCancelButton: true,
+                confirmButtonText: 'Submit',
+                showLoaderOnConfirm: true,
+                preConfirm: function() {
+                    return new Promise(function(resolve) {
+                        setTimeout(function() {
+                            resolve();
+                        }, 2000);
+                    });
+                },
+                allowOutsideClick: false
+            }).then(function(email) {
+                if (email) {
+                    swal({
+                        type: 'success',
+                        title: 'Ajax request finished!',
+                        html: 'Submitted email: ' + email
+                    });
+                }
+            })
         }
         
         function autoSwitch() {

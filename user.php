@@ -19,6 +19,7 @@ if(isset($_POST['action'])){
         case "auto_sign":
             autoSwitch($user_db,$uid,$_POST['data']);
             break;
+        case "email":
 
     }
 }
@@ -29,6 +30,12 @@ try{
     success("获取成功","",$res_yxzw->results[0]);
 }catch (Exception $e){
     error($e);
+}
+
+function updateEmail($user_db,$uid,$email){
+    $data["email"]=$email;
+    $user_db->update($uid,$data);
+    success("修改成功");
 }
 
 function autoSwitch($user_db,$uid,$status){
