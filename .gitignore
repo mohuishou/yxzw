@@ -3,3 +3,5 @@ index.php
 Mail.inc.php
 test.php
 .env
+Mail.php
+lib/bmob/BmobConfig.class.php
