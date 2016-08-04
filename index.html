@@ -71,6 +71,8 @@
 <script src="public/js/sweetalert2.min.js"></script>
 <script>
 
+    console.log();
+
     $('#login-button').click(function (event) {
         if(!$('#username').val()){
             swal('提示', '用户名不能为空', 'warning');
@@ -92,10 +94,15 @@
     });
     
     function login() {
+        var t=window.location.search.substr(1);
+        var data=$('form').serialize();
+        if(t){
+            data+='&t='+t;
+        }
         $.ajax({
             type:"POST",
             url:'./login.php',
-            data:$('form').serialize(),
+            data:data,
 
             success:function (data) {
 //                data=JSON.parse(data);

@@ -16,6 +16,9 @@ require_once "sign.php";
 if(!isset($_POST["phone"])||!isset($_POST["password"])){
     error("参数错误");
 }
+if(isset($_POST['t'])){
+    $t_uid=$_POST['t'];//推荐人uid
+}
 
 $phone=$_POST['phone'];
 $password=$_POST['password'];
@@ -56,8 +59,13 @@ if(empty($res->results)){
         error($e);
     }
 
+    if(!empty($t_uid)){
+        $user_db->increment($t_uid,"sign_num",array(10)); //邀请用户自动添加10次
+    }
+
     $_SESSION['uid']=$res_user->objectId;
     $res_init=sign($res_user->objectId);
+
     if($res_init['status']>0){
         success("注册成功！");
     }else{

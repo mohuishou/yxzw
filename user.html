@@ -58,6 +58,10 @@
             margin: 5px;
         }
 
+        #pay{
+            width:300px;
+        }
+
 
     </style>
 </head>
@@ -106,12 +110,26 @@
         <div class="am-cf am-padding">
             <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">用户设置</strong></div>
         </div>
-        <ul class="am-avg-sm-2 am-avg-md-2 am-margin am-padding am-text-center user-content-list ">
+        <ul class="am-avg-sm-2 am-avg-md-4 am-margin am-padding am-text-center user-content-list ">
             <li><a onclick="autoSwitch()" id="auto-status" data-status="0"  class="am-text-success"><span class="am-icon-btn am-icon-chrome"></span><br>自动签到<br><span id="auto-status-text">已开启</span></a></li>
             <li><a  onclick="email()" class="am-text-warning"><span class="am-icon-btn am-icon-at"></span><br>邮箱绑定<br><span id="email-text">尚未绑定</span></a></li>
+            <li><a id="invitation" onclick="invitation()" class="am-text-warning"><span class="am-icon-btn am-icon-user-md"></span><br>邀请有奖<br><span>点击查看</span></a></li>
+            <li><a  data-am-modal="{target: '#donation', closeViaDimmer: 0}" id="" class="am-text-warning"><span class="am-icon-btn am-icon-user-md"></span><br>捐赠<br><span>点击查看</span></a></li>
         </ul>
     </div>
-
+    <div class="am-modal am-modal-no-btn" tabindex="-1" id="donation">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">捐赠
+                <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+            </div>
+            <div class="am-modal-bd">
+               <p>感谢您的使用，由于服务器的费用的原因，不得不向大家征集一些捐助费用，还望理解，</p>
+               <p>￥2=31次，相当于一个月，在付款的时候记得备注您的手机号码，方便我添加，如果忘记了，请将付款截图和手机号一并发送到我的邮箱，谢谢您的使用</p>
+                <p>如果在使用的过程当中有什么问题或者是建议，您可以给我发送邮件:1@lailin.xyz</p>
+                <img id="pay" src="public/img/pay.jpg"/>
+            </div>
+        </div>
+</div>
 
 
     <script src="public/js/jquery-2.1.1.min.js"></script>
@@ -165,6 +183,8 @@
             var auto_status=data.user.auto_status;
             $("#auto-status").attr("data-status",auto_status);
 
+            $("#invitation").attr("uid",data.user.objectId);
+
             //邮箱
             var email=data.user.email;
             if(email){
@@ -204,6 +224,21 @@
             $(".loader").fadeOut("slow");
         }
         
+        function invitation() {
+            var uid=$("#invitation").attr("uid");
+            swal({
+                title: '您的邀请链接',
+                type: 'info',
+                html:'当别人通过你的邀请链接首次登录时，你的自动签到次数将会增加10次<br /> 您的邀请链接为：http:y.lxl520.com?'+uid,
+                showCancelButton: true,
+                confirmButtonText: '确定',
+                allowOutsideClick: false
+            });
+        }
+
+        /**
+         *邮箱
+         */
         function email() {
             swal({
                 title: '绑定邮箱',
@@ -245,7 +280,10 @@
                 }
             })
         }
-        
+
+        /**
+         *自动签到开关
+         **/
         function autoSwitch() {
             var now_status=$("#auto-status").attr("data-status");
             var text='';
