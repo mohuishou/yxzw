@@ -1,6 +1,7 @@
 <?php
 namespace Mohuishou\Lib;
 use Curl\Curl;
+use Mohuishou\ImageOCR\Image;
 use MongoDB\BSON\ObjectID;
 
 /**
@@ -26,6 +27,8 @@ class YxzwSign
      */
     protected $_login_url="http://169ol.com/Mobile/User/submitLogin";
 
+    protected $_code_url="http://www.169ol.com/Mall/Code/getCode&1462104790492";
+
     /**
      * 用户签到界面
      * @var string
@@ -39,6 +42,7 @@ class YxzwSign
     protected $_login_param=[
         "phone"=>0,//手机号
         "password"=>"",//密码
+        "imgcode"=>"",//验证码
         "type"=>1,
         "backurl"=>"/Mobile/Personal/index"
     ];
@@ -53,6 +57,35 @@ class YxzwSign
 
 	}
 
+	public function getCode($i=0){
+	    $img_path='./img/code'.$i.'.png';
+        $curl =new Curl();
+        $curl->download($this->_code_url, $img_path);
+        $this->_login_cookie=$curl->getResponseCookie("PHPSESSID");
+        $img=new Image($img_path);
+        $code_arr=$img->find();
+        $code=implode("",$code_arr);
+        $this->_login_param['imgcode']=$code;
+    }
+
+    public function login($phone,$password){
+        $this->_login_param["phone"]=$phone;
+        $this->_login_param["password"]=$password;
+        for($i=0;$i<8;$i++){
+            $this->getCode($i);
+            $status=$this->login2();
+            switch ($status){
+                case 1:
+                    return true;
+                case 2:
+                    continue;
+                    break;
+                default:
+                    return false;
+            }
+        }
+    }
+
     /**
      * 登陆优选在沃
      * @author mohuishou<1@lailin.xyz>
@@ -60,21 +93,27 @@ class YxzwSign
      * @param $password
      * @return bool
      */
-	public function login($phone,$password){
-        $this->_login_param["phone"]=$phone;
-        $this->_login_param["password"]=$password;
-        $this->_login_cookie="../cookies/yxzw/".$phone.".cookie";
-        $this->_curl->setCookieJar($this->_login_cookie);
+	public function login2(){
+        $this->_curl->setCookie("PHPSESSID",$this->_login_cookie);
         $this->_curl->post($this->_login_url,$this->_login_param);
         if ($this->_curl->error) {
             echo 'Error: ' . $this->_curl->errorCode . ': ' . $this->_curl->errorMessage;
-            return false;
-        }
-        else {
+            return 3;
+        }else {
             $res=json_decode($this->_curl->response);
 //            print_r($res);
-            if($res->code) return true;
-            return false;
+//            echo "<br />*******************************************************************<br />";
+            if($res->code){
+                return 1;
+            }else{
+                $res_type=strpos($res->message,"验证码");
+                if($res_type){
+                    return 2;
+                }else{
+                    return 0;
+                }
+
+            }
         }
 	}
 

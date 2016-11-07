@@ -61,6 +61,11 @@
         #pay{
             width:300px;
         }
+        @media(max-width: 500px){
+            #pay{
+                max-width:200px;
+            }
+        }
 
 
     </style>
@@ -126,7 +131,7 @@
                <p>感谢您的使用，由于服务器的费用的原因，不得不向大家征集一些捐助费用，还望理解，</p>
                <p>￥2=31次，相当于一个月，在付款的时候记得备注您的手机号码，方便我添加，如果忘记了，请将付款截图和手机号一并发送到我的邮箱，谢谢您的使用</p>
                 <p>如果在使用的过程当中有什么问题或者是建议，您可以给我发送邮件:1@lailin.xyz</p>
-                <img id="pay" src="public/img/pay.jpg"/>
+                <img id="pay" src="public/img/pay.png"/>
             </div>
         </div>
 </div>
@@ -141,7 +146,9 @@
             url:'./user.php',
             success:function (data) {
                 if(data.status){
-                    init(data.data);
+                    if(data.data){
+                        init(data.data);
+                    }
                 }else {
                     swal({
                         title: '提示',
@@ -226,10 +233,11 @@
         
         function invitation() {
             var uid=$("#invitation").attr("uid");
+            var url='http://y.lxl520.com?'+uid;
             swal({
                 title: '您的邀请链接',
                 type: 'info',
-                html:'当别人通过你的邀请链接首次登录时，你的自动签到次数将会增加10次<br /> 您的邀请链接为：http:y.lxl520.com?'+uid,
+                html:'当别人通过你的邀请链接首次登录时，你的自动签到次数将会增加10次<br /> 您的邀请链接为：<a href="'+url+'">'+url+'</a>',
                 showCancelButton: true,
                 confirmButtonText: '确定',
                 allowOutsideClick: false

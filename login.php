@@ -23,24 +23,22 @@ if(isset($_POST['t'])){
 $phone=$_POST['phone'];
 $password=$_POST['password'];
 
-if(!preg_match("/0?(13|14|15|18)[0-9]{9}/",$phone)){
+if(!preg_match("/0?(13|14|15|18|17)[0-9]{9}/",$phone)){
     error("手机号码格式错误");
 }
-
 //验证账号密码是否正确
 $yxzw=new \Mohuishou\Lib\YxzwSign();
-$res_yxzw=$yxzw->login($phone,$password);
 
-if(!$res_yxzw){
-    error("手机号或者密码错误！");
-}
 try{
+    $res_yxzw=$yxzw->login($phone,$password);
+    if(!$res_yxzw){
+        error("手机号或者密码错误！");
+    }
     $user_db=new BmobObject("user");
     $res=$user_db->get("",['where={"phone":"'.$phone.'"}']);
 }catch (Exception $e){
-    error($e);
+    error($e->getMessage());
 }
-
 //不存在该用户
 if(empty($res->results)){
     $res_sign_num=$yxzw->signNum();
@@ -56,7 +54,7 @@ if(empty($res->results)){
     try{
         $res_user=$user_db->create($user_data);
     }catch (Exception $e){
-        error($e);
+        error($e->getMessage());
     }
 
     if(!empty($t_uid)){
@@ -84,7 +82,7 @@ if($password==$res->results[0]->password){
         $res=$user_db->update($_SESSION["uid"], array("password"=>$password));
         success("登录成功！");
     }catch (Exception $e){
-        error($e);
+        error($e->getMessage());
     }
 }
 

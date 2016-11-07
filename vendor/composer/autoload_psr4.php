@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'Mohuishou\\Lib\\' => array($baseDir . '/class'),
+    'Mohuishou\\ImageOCR\\' => array($vendorDir . '/mohuishou/image-ocr'),
     'Dotenv\\' => array($vendorDir . '/vlucas/phpdotenv/src'),
     'Curl\\' => array($vendorDir . '/php-curl-class/php-curl-class/src/Curl'),
 );

@@ -4,9 +4,48 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "761395ed83d846972ee0784bafdc8332",
-    "content-hash": "335def55b8f2e5b279c428c278d11a6d",
+    "hash": "2be0652876ff88d9f78cb8d9559db619",
+    "content-hash": "a1beee5cacd977073e98c0a72211838f",
     "packages": [
+        {
+            "name": "mohuishou/image-ocr",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mohuishou/ImageOCR.git",
+                "reference": "a6a5e07cfdcb57dad8c3c10395d63fa66535ab2d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mohuishou/ImageOCR/zipball/a6a5e07cfdcb57dad8c3c10395d63fa66535ab2d",
+                "reference": "a6a5e07cfdcb57dad8c3c10395d63fa66535ab2d",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Mohuishou\\ImageOCR\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "mohuishou",
+                    "email": "1@lailin.xyz"
+                }
+            ],
+            "description": "验证码识别",
+            "keywords": [
+                "OCR",
+                "image",
+                "验证码",
+                "验证码识别"
+            ],
+            "time": "2016-10-07 13:07:19"
+        },
         {
             "name": "php-curl-class/php-curl-class",
             "version": "4.13.0",
@@ -17,7 +56,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/php-curl-class/php-curl-class/debe0a89ee1eb9a2f15c0bb63ce8b347130af50d.zip",
+                "url": "https://api.github.com/repos/php-curl-class/php-curl-class/zipball/debe0a89ee1eb9a2f15c0bb63ce8b347130af50d",
                 "reference": "debe0a89ee1eb9a2f15c0bb63ce8b347130af50d",
                 "shasum": ""
             },
@@ -73,7 +112,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://packagist.phpcomposer.com/files/vlucas/phpdotenv/9ca5644c536654e9509b9d257f53c58630eb2a6a.zip",
+                "url": "https://api.github.com/repos/vlucas/phpdotenv/zipball/9ca5644c536654e9509b9d257f53c58630eb2a6a",
                 "reference": "9ca5644c536654e9509b9d257f53c58630eb2a6a",
                 "shasum": ""
             },

@@ -4,9 +4,16 @@
     "require": {
         "php": ">5.3",
 		"vlucas/phpdotenv": "^2.3",
-		"php-curl-class/php-curl-class": "^4.13"
+		"php-curl-class/php-curl-class": "^4.13",
+		"mohuishou/image-ocr": "^0.1.0"
     },
     "autoload": {
         "psr-4": {"Mohuishou\\Lib\\": "class/"}
-    }
+    },
+	"repositories": {
+		"packagist": {
+			"type": "composer",
+			"url": "https://packagist.org"
+		}
+	}
 }

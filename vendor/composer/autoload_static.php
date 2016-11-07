@@ -10,6 +10,7 @@ class ComposerStaticInit42d49536861f97ae0c15e180f8853d2f
         'M' => 
         array (
             'Mohuishou\\Lib\\' => 14,
+            'Mohuishou\\ImageOCR\\' => 19,
         ),
         'D' => 
         array (
@@ -25,6 +26,10 @@ class ComposerStaticInit42d49536861f97ae0c15e180f8853d2f
         'Mohuishou\\Lib\\' => 
         array (
             0 => __DIR__ . '/../..' . '/class',
+        ),
+        'Mohuishou\\ImageOCR\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mohuishou/image-ocr',
         ),
         'Dotenv\\' => 
         array (

@@ -24,6 +24,8 @@ function sign($uid){
 
     //获取签到状态，并做出相应操作
     $auto_status=$auto_sign['status'];
+
+    $status="成功";
     try{
         switch ($auto_status){
             case 1:
@@ -32,12 +34,15 @@ function sign($uid){
                 break;
             case 2:
                 $msg_status="今日已签到，不会扣除自动签到次数";
+                $status="已签到";
                 update($yxzw_db,$user->objectId,$yxzw_data,$user_db,$auto_sign["wb"],$auto_status);
                 break;
             case 0:
+                $status="失败";
                 $msg_status="签到失败，请手动尝试！";
                 break;
             case -1:
+                $status="失败";
                 $msg_status="登录失败，请检查您的手机号与密码！";
                 break;
         }
