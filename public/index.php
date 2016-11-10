@@ -10,7 +10,7 @@
 | is ready to receive HTTP / Console requests from the environment.
 |
 */
-
+header('Access-Control-Allow-Origin: y.lxl520.com');
 $app = require __DIR__.'/../bootstrap/app.php';
 
 /*
