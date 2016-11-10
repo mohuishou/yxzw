@@ -77,10 +77,12 @@ class UserController extends Controller{
     public function user(Request $request){
         $user=$request->user();
         $yxzw=$user->yxzw->where("month",(int)date("m"))->first();
-        $sign_info=json_decode($yxzw->sign_info);
-        $user=$user->toArray();
-        $user["yxzw"]=$yxzw;
-        $user["yxzw"]["sign_info"]=$sign_info;
+        if(isset($yxzw->sign_info)){
+            $sign_info=json_decode($yxzw->sign_info);
+            $user=$user->toArray();
+            $user["yxzw"]=$yxzw;
+            $user["yxzw"]["sign_info"]=$sign_info;
+        }
         return $this->success("数据获取成功！",$user);
     }
 
