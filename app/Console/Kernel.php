@@ -42,6 +42,6 @@ class Kernel extends ConsoleKernel
                     }
                 }
             }
-        })->everyMinute();
+        })->twiceDaily(0,12);
     }
 }
