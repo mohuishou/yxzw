@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="优选在沃自动签到系统 by 莫回首">
+    <meta name="keywords" content="优选在沃,优选在沃自动签到系统,莫回首,若相惜">
+    <title>优选在沃自动签到系统</title>
+    <link rel="stylesheet" type="text/css" href="public/css/amazeui.min.css">
+    <link rel="stylesheet" type="text/css" href="public/css/sweetalert2.min.css">
+    <!--[if IE]>
+    <script src="http://libs.useso.com/js/html5shiv/3.7/html5shiv.min.js"></script>
+    <![endif]-->
+    <style>
+        .loader {
+            position: fixed;
+            z-index: 100000;
+            width: 100%;
+            height: 100%;
+            background-color:rgba(51,51,51,0.6);
+        }
+
+        .fading-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 100px;
+            margin: -50px 0 0 -100px;
+            background-image: url(public/img/three-dots.svg);
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+
+        .user-content-list{
+            border: 1px solid #e9ecf1;
+            margin-top: 0;
+        }
+        .user-content-list li{
+            border-left: 1px solid #e9ecf1;
+            margin-top: 5px;
+        }
+        .user-content-list li:first-child{
+            border-left:none;
+        }
+        .cal-items{
+            padding:15px;
+        }
+
+        #alert{
+            padding:10px 20px;
+            display: none;
+        }
+
+        #alert p{
+            margin: 5px;
+        }
+
+        #pay{
+            width:300px;
+        }
+        @media(max-width: 500px){
+            #pay{
+                max-width:200px;
+            }
+
+            .sign-day *{
+                font-size: 12px;
+            }
+            .cal-items{
+                padding:5px;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+<div class="loader">
+    <div class="fading-line">
+    </div>
+</div>
+    <header class="am-topbar">
+        <div class="am-g am-g-fixed">
+            <h1 class="am-topbar-brand">
+                <a href="#">优选在沃自动签到系统</a>
+            </h1>
+            <button class="am-topbar-btn am-topbar-toggle am-btn am-btn-sm  am-show-sm-only" data-am-collapse="{target: '#doc-topbar-collapse'}"><span class="am-sr-only">导航切换</span> <span class="am-icon-bars"></span></button>
+            <div class="am-collapse am-topbar-collapse" id="doc-topbar-collapse">
+                <div class="am-topbar-right">
+                    <div class="am-dropdown" data-am-dropdown="{boundary: '.am-topbar'}">
+                        <a class="am-btn  am-topbar-btn am-btn-sm am-dropdown-toggle" data-am-dropdown-toggle>用户 <span id="user-phone">12345678912</span> 您好<span class="am-icon-caret-down"></span></a>
+                        <ul class="am-dropdown-content">
+                            <li><a href="#" onclick="logout()">退出登录</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+    <div class="am-g am-g-fixed" id="main">
+        <div id="alert" class="am-alert-danger am-margin">
+
+        </div>
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">用户信息</strong> </div>
+        </div>
+        <ul class="am-avg-sm-2 am-avg-md-4 am-margin am-padding am-text-center user-content-list ">
+            <li><a href="#" class="am-text-success"><span class="am-icon-btn"><small id="sign_num">12</small></span><br>剩余自动签到</a></li>
+            <li><a href="#" class="am-text-warning"><span class="am-icon-btn"><small id="all_sign">12</small></span><br>本月签到总数</a></li>
+            <li><a href="#" class="am-text-danger"><span class="am-icon-btn"><small id="auto_sign">12</small></span><br>本月自动签到数目</a></li>
+            <li><a href="#" class="am-text-secondary"><span class="am-icon-btn"><small id="wb">12</small></span><br>剩余沃贝数目</a></li>
+        </ul>
+        <div class="am-cf am-padding sign-day">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">签到详情</strong>/<small>绿色背景表示已签到</small> </div>
+        </div>
+        <div id="cal" class="am-panel am-margin am-panel-default">
+        </div>
+
+        <div class="am-cf am-padding">
+            <div class="am-fl am-cf"><strong class="am-text-primary am-text-lg">用户设置</strong></div>
+        </div>
+        <ul class="am-avg-sm-2 am-avg-md-4 am-margin am-padding am-text-center user-content-list ">
+            <li><a onclick="autoSwitch()" id="auto-status" data-status="0"  class="am-text-success"><span class="am-icon-btn am-icon-chrome"></span><br>自动签到<br><span id="auto-status-text">已开启</span></a></li>
+            <li><a  onclick="email()" class="am-text-warning"><span class="am-icon-btn am-icon-at"></span><br>邮箱绑定<br><span id="email-text">尚未绑定</span></a></li>
+            <li><a id="invitation" onclick="invitation()" class="am-text-warning"><span class="am-icon-btn am-icon-user-md"></span><br>邀请有奖<br><span>点击查看</span></a></li>
+            <li><a  data-am-modal="{target: '#donation', closeViaDimmer: 0}" id="" class="am-text-warning"><span class="am-icon-btn am-icon-user-md"></span><br>捐赠<br><span>点击查看</span></a></li>
+        </ul>
+    </div>
+    <div class="am-modal am-modal-no-btn" tabindex="-1" id="donation">
+        <div class="am-modal-dialog">
+            <div class="am-modal-hd">捐赠
+                <a href="javascript: void(0)" class="am-close am-close-spin" data-am-modal-close>&times;</a>
+            </div>
+            <div class="am-modal-bd">
+               <p>感谢您的使用，由于服务器的费用的原因，不得不向大家征集一些捐助费用，还望理解，</p>
+               <p>￥2=31次，相当于一个月，在付款的时候记得备注您的手机号码，方便我添加，如果忘记了，请将付款截图和手机号一并发送到我的邮箱，谢谢您的使用</p>
+                <p>如果在使用的过程当中有什么问题或者是建议，您可以给我发送邮件:1@lailin.xyz</p>
+                <img id="pay" src="public/img/pay.png"/>
+            </div>
+        </div>
+</div>
+
+
+    <script src="public/js/jquery-2.1.1.min.js"></script>
+    <script src="public/js/amazeui.min.js"></script>
+    <script src="public/js/sweetalert2.min.js"></script>
+    <script>
+
+      var domain="http://y.lxl520.app:8080";
+      var token=getQueryString("token");
+      function getQueryString(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]); return null;
+      }
+      $.ajax({
+          type:"GET",
+          url:domain+'/user?token='+token,
+          success:function (data) {
+              if(data.status){
+                  if(data.data){
+                      console.log(data.data);
+                      init(data.data);
+                  }
+              }else {
+                  swal({
+                      title: '提示',
+                      text: data.info,
+                      type: 'warning',
+                      showCancelButton: false,
+                      confirmButtonText: '跳转中...'
+                  });
+                  setTimeout(function () {
+                      location.href="./index.html";
+                  },1000);
+              }
+              console.log(data);
+          },
+          error:function (e) {
+              swal('Oops...', '服务器错误', 'error');
+          }
+      });
+
+
+      /**
+       * 初始化
+       * @param data
+       */
+      function init(data) {
+          $("#user-phone").text(data.phone);
+          $("#all_sign").text(data.yxzw.all_sign);
+
+          //是否已经自动签到
+          if(data.auto_sign){
+              $("#auto_sign").text(data.yxzw.auto_sign);
+          }else {
+              $("#auto_sign").text(0);
+          }
+
+          $("#sign_num").text(data.sign_num);
+          $("#wb").text(data.wb);
+
+          //自动状态
+          var auto_status=data.auto_status;
+          $("#auto-status").attr("data-status",auto_status);
+
+          $("#invitation").attr("uid",data.id);
+
+          //邮箱
+          var email=data.email;
+          if(email){
+              $("#email-text").text(email);
+          }else {
+              $("#alert").append(" <p>尚未绑定邮箱，无法收到自动签到提醒</p>");
+              $("#alert").css("display","block");
+          }
+
+          if(!auto_status){
+              $("#auto-status-text").text("已关闭");
+              $("#alert").append("<p>尚未开启自动签到</p>");
+              $("#alert").css("display","block");
+          }
+
+          var sign_info=data.yxzw.sign_info;
+          var str='';
+          var o;
+          var i=1;
+          for (o in sign_info){
+              if(i%7==1){
+                  str+='<ul class="am-avg-sm-7 am-avg-md-7 am-avg-lg-7 am-text-center">'
+              }
+              if(sign_info[o].signed==1){
+                  str+='<li class="cal-items am-alert-success">'+i+'</li>';
+              }else {
+                  str+='<li class="cal-items">'+i;
+              }
+              if(i%7==0){
+                  str+="</ul>";
+              }
+              i++;
+          }
+
+          $("#cal").html(str);
+          $(".loader .fading-line").fadeOut();
+          $(".loader").fadeOut("slow");
+      }
+
+      function invitation() {
+          var uid=$("#invitation").attr("uid");
+          var url='http://y.lxl520.com?'+uid;
+          swal({
+              title: '您的邀请链接',
+              type: 'info',
+              html:'当别人通过你的邀请链接首次登录时，你的自动签到次数将会增加10次<br /> 您的邀请链接为：<a href="'+url+'">'+url+'</a>',
+              showCancelButton: true,
+              confirmButtonText: '确定',
+              allowOutsideClick: false
+          });
+      }
+
+      /**
+       *邮箱
+       */
+      function email() {
+          swal({
+              title: '绑定邮箱',
+              input: 'email',
+              showCancelButton: true,
+              confirmButtonText: 'Submit',
+              showLoaderOnConfirm: true,
+              allowOutsideClick: false
+          }).then(function(email) {
+              if (email) {
+                  $.ajax({
+                      type:"POST",
+                      url:domain+'/email',
+                      data:{
+                          "email":email,
+                          "token":token
+                      },
+                      success:function (data) {
+                          if(data.status){
+                              swal({
+                                  title: '提示',
+                                  text: data.info,
+                                  type: 'success',
+                                  showCancelButton: false,
+                                  confirmButtonText: '跳转中...'
+                              });
+                              setTimeout(function () {
+                                  location.href="./user.html?token="+token;
+                              },1000);
+                          }else {
+                              swal('Oops...', '修改失败', 'error');
+                          }
+                          console.log(data);
+                      },
+                      error:function (e) {
+                          swal('Oops...', '服务器错误', 'error');
+                      }
+                  });
+              }
+          })
+      }
+
+      /**
+       *自动签到开关
+       **/
+      function autoSwitch() {
+          var now_status=$("#auto-status").attr("data-status");
+          var text='';
+          if(now_status==0){
+              text="即将开启自动签到！";
+              now_status=1;
+          }else {
+              text="即将关闭自动签到！";
+              now_status=0;
+          }
+          swal({
+              title: 'Are you sure?',
+              text: text,
+              type: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Yes',
+              cancelButtonText: 'No',
+          }).then(function(isConfirm) {
+              if (isConfirm === true) {
+                  $.ajax({
+                      type:"POST",
+                      url:domain+'/auto',
+                      data:{
+                          "token":token,
+                          "status":now_status
+                      },
+                      success:function (data) {
+                          if(data.status){
+                              swal({
+                                  title: '提示',
+                                  text: data.info,
+                                  type: 'success',
+                                  showCancelButton: false,
+                                  confirmButtonText: '跳转中...'
+                              });
+                              setTimeout(function () {
+                                  location.href="./user.html?token="+token;
+                              },1000);
+                          }else {
+                              swal('Oops...', '修改失败', 'error');
+                          }
+                          console.log(data);
+                      },
+                      error:function (e) {
+                          swal('Oops...', '服务器错误', 'error');
+                      }
+                  });
+
+              } else if (isConfirm === false) {
+                  swal(
+                          'Cancelled',
+                          '操作已取消',
+                          'error'
+                  );
+
+              } else {
+                  // Esc, close button or outside click
+                  // isConfirm is undefined
+              }
+          });
+      }
+
+      /**
+       * 退出登录
+       */
+      function logout() {
+          $.ajax({
+              type:"POST",
+              url:domain+'/logout',
+              data:{"token":token},
+              success:function (data) {
+                  if(data.status){
+                      swal({
+                          title: '提示',
+                          text: data.info,
+                          type: 'warning',
+                          showCancelButton: false,
+                          confirmButtonText: '跳转中...'
+                      });
+                      setTimeout(function () {
+                          location.href="./index.html";
+                      },1000);
+                  }else {
+                      swal('Oops...', '退出登录失败，您可以直接关闭浏览器', 'error');
+                  }
+                  console.log(data);
+              },
+              error:function (e) {
+                  swal('Oops...', '服务器错误', 'error');
+              }
+          });
+      }
+
+
+    </script>
+</body>
+</html>
