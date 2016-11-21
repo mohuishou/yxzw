@@ -15,6 +15,11 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
+$app->get('/test', [
+    'as' => 'test',
+    'uses' => 'ExampleController@test'
+]);
+
 //登录
 $app->post("login",[
     'as' => 'user.login',

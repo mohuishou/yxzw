@@ -105,7 +105,7 @@ class SignController extends Controller{
             $msg .="【剩余自动签到次数】：".$user->sign_num."<br />";
             $msg .="【签到时间】：".date("Y-m-d H:i:s")."<br />";
             $msg .="详情请点击：http://y.lxl520.com 登录查看，感谢您的使用";
-            if(isset($user->email)){
+            if(isset($user->email)&&!empty($user->email)){
                 $res=$this->sendMail($msg,$user->email,$status);
                 print_r($res);
             }
